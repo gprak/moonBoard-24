@@ -1,4 +1,5 @@
 
+import numpy as np
 import itertools
 
 
@@ -20,6 +21,15 @@ def hold_row(hold): return hold[1:]
 def hold_row_int(hold): return int(hold_row(hold))
 def hold_column(hold): return hold[0]
 def hold_col_int(hold): return column_int[hold_column(hold)]
+
+
+
+### TRAIN-TEST-SPLIT ###
+
+from traintest import test_indicator
+train_tf = [i == 0 for i in test_indicator]
+test_tf = [i == 1 for i in test_indicator]
+
 
 #Converts holds to an index between 0 and 197
 table = dict()
