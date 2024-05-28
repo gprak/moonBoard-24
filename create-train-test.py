@@ -13,4 +13,3 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, rando
 test_indicator = [1*(id in X_test) for id in X]
 
 print(test_indicator)
-
