@@ -17,7 +17,7 @@ def get_raw_features(prob):
         output['grade'] = prob['userGrade']
     else:
         output['grade'] = prob['grade']
-    output['benchmark'] = prob['isBenchmark']
+    output['benchmark'] = 1*prob['isBenchmark']
     output['start1'] = ''
     output['start2'] = ''
     start_set = False
@@ -25,20 +25,43 @@ def get_raw_features(prob):
     for hold in md.mb_holds:
         output[hold] = 0
     for move in prob['moves']:
-        output[move['description']] = 1
+        hold = move['description']
+        if hold == 'j5':
+            hold = 'J5'
+        output[hold] = 1
         if move['isStart']:
             if not start_set:
-                output['start1'] = output['start2'] = move['description']
+                output['start1'] = output['start2'] = hold
                 start_set = True
             else:
-                output['start2'] = move['description']
+                if hold < output['start1']:
+                    output['start1'] = hold
+                else:
+                    output['start2'] = hold
         if move['isEnd']:
             output['end'] = move['description']
     return output
 
-list_raw_features = [get_raw_features(prob) for prob in source_dict['data']]
-list_raw_features[340]['start1'] = list_raw_features[340]['start2'] = 'J5'
-del list_raw_features[340]['j5']
+def clean(prob):
+    if prob['isBenchmark']:
+        return True
+    elif prob['moves'][0]['problemId'] == 304387:
+        return False
+    elif prob['grade'] == '6B+':
+        if prob['userGrade'] != '6B+':
+            return False
+        elif prob['grade'] == '6B+' and prob['userRating'] < 4:
+            return False
+        elif prob['repeats'] < 10:
+            return False
+        else:
+            return True
+    else:
+        return True
+
+list_raw_features = [get_raw_features(prob) for prob in source_dict['data'] if clean(prob)]
+#list_raw_features[340]['start1'] = list_raw_features[340]['start2'] = 'J5' # Index no longer accurate
+#del list_raw_features[340]['j5'] # Index no longer accurate
 
 raw_df = pd.DataFrame(list_raw_features)
 
