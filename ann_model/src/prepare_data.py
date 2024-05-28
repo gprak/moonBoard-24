@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 
 
-source_path = "./Problems/problems MoonBoard 2016 .json"
+source_path = "../../dataset/problems MoonBoard 2016 .json"
 
 with open(source_path) as file:
     source_dict = json.load(file)
