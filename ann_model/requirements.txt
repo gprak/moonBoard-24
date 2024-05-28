@@ -2,9 +2,7 @@
 
 pandas
 numpy
-sklearn
-torch
-json
+scikit-learn
 matplotlib
 seaborn
 snakeviz
