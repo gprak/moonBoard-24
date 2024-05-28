@@ -1,0 +1,13 @@
+-r requirements-dev.txt
+
+pandas
+numpy
+sklearn
+torch
+json
+matplotlib
+seaborn
+snakeviz
+pyinstrument
+jupyterlab
+notebook
