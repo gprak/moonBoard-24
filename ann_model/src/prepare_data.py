@@ -1,8 +1,9 @@
 import json
 
-import metadata as md
 import numpy as np
 import pandas as pd
+
+import nn_metadata as md
 
 
 source_path = "../../dataset/problems MoonBoard 2016 .json"

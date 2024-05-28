@@ -1,6 +1,7 @@
 import itertools
 
-from traintest import test_indicator
+
+# from traintest import test_indicator
 
 
 # GRADES ###
@@ -84,8 +85,8 @@ def hold_col_int(hold):
 # TRAIN-TEST-SPLIT ###
 
 
-train_tf = [i == 0 for i in test_indicator]
-test_tf = [i == 1 for i in test_indicator]
+# train_tf = [i == 0 for i in test_indicator]
+# test_tf = [i == 1 for i in test_indicator]
 
 
 # Converts holds to an index between 0 and 197
