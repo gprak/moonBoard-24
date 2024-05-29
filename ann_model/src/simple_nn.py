@@ -7,6 +7,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as f
 from sklearn.model_selection import train_test_split
+from torch.utils.data import DataLoader
 
 
 class Model(nn.Module):
@@ -26,22 +27,31 @@ class Model(nn.Module):
         self.out = nn.Linear(h[-1], out_features)  # output layer
 
     def forward(self, x: torch.tensor) -> torch.tensor:
+        print("init", x.device)
         for i in range(len(self.fc)):
             cf = self.fc[i]
-            x = f.tanh(cf(x))
+            x = f.tanh(cf(x))  # if self.gpu else f.tanh(cf(x))
+            print("loop", x.device)
 
         x = self.out(x)
+        print("out", x.device)
         return x
 
 
 class SimpleNN:
-    def __init__(self, df: pd.DataFrame) -> None:
+    def __init__(self, df: pd.DataFrame, gpu: bool = False) -> None:
         super().__init__()
 
         self.df = df
-        self.x_train, self.x_test, self.y_train, self.y_test = (
-            SimpleNN.split_dataset(self.df, 0.2)
-        )
+        self.gpu = gpu
+        (
+            self.x_train,
+            self.x_test,
+            self.y_train,
+            self.y_test,
+            self.train_loader,
+            self.test_loader,
+        ) = SimpleNN.split_dataset(self.df, 0.2)
 
     @staticmethod
     def split_dataset(
@@ -59,13 +69,20 @@ class SimpleNN:
             x, y, test_size=fraction, random_state=33
         )
 
-        x_train = torch.FloatTensor(np.array(xtrain.tolist()))
-        x_test = torch.FloatTensor(np.array(xtest.tolist()))
+        x_train = torch.FloatTensor(np.array(xtrain.tolist())).cuda()
+        x_test = torch.FloatTensor(np.array(xtest.tolist())).cuda()
 
-        y_train = torch.LongTensor(np.array(ytrain.tolist()))
-        y_test = torch.LongTensor(np.array(ytest.tolist()))
+        y_train = torch.LongTensor(np.array(ytrain.tolist())).cuda()
+        y_test = torch.LongTensor(np.array(ytest.tolist())).cuda()
 
-        return x_train, x_test, y_train, y_test
+        train_loader = DataLoader(
+            x_train, batch_size=60, shuffle=True, pin_memory=True
+        )
+        test_loader = DataLoader(
+            x_test, batch_size=60, shuffle=False, pin_memory=True
+        )
+
+        return x_train, x_test, y_train, y_test, train_loader, test_loader
 
     def train_model(
         self, model: Model, lr: float, epochs: int
@@ -107,4 +124,6 @@ class SimpleNN:
     def run_model(
         self, h: tuple, lr: float, epochs: int
     ) -> Tuple[List[float], float, int]:
-        return self.train_model(Model(h), lr=lr, epochs=epochs)
+        model = Model(h)
+        gpumodel = model.cuda() if self.gpu else model(h)
+        return self.train_model(gpumodel, lr=lr, epochs=epochs)
