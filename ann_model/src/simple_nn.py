@@ -12,7 +12,7 @@ from sklearn.model_selection import train_test_split
 class Model(nn.Module):
     def __init__(
         self,
-        h: Tuple = (40, 20, 10),
+        h: tuple = (40, 20, 10),
         in_features: int = 198,
         out_features: int = 10,
     ) -> None:
@@ -34,18 +34,18 @@ class Model(nn.Module):
         return x
 
 
-class NeuralNetwork:
-    def __init__(self, df: pd.Dataframe) -> None:
+class SimpleNN:
+    def __init__(self, df: pd.DataFrame) -> None:
         super().__init__()
 
         self.df = df
         self.x_train, self.x_test, self.y_train, self.y_test = (
-            NeuralNetwork.split_dataset(self.df, 0.2)
+            SimpleNN.split_dataset(self.df, 0.2)
         )
 
     @staticmethod
     def split_dataset(
-        df: pd.Dataframe, fraction: float
+        df: pd.DataFrame, fraction: float
     ) -> Tuple[
         torch.FloatTensor,
         torch.FloatTensor,
@@ -103,3 +103,8 @@ class NeuralNetwork:
                     correct += 1
 
         return losses_train, loss_test, correct
+
+    def run_model(
+        self, h: tuple, lr: float, epochs: int
+    ) -> Tuple[List[float], float, int]:
+        return self.train_model(Model(h), lr=lr, epochs=epochs)

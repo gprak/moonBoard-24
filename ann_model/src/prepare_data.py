@@ -1,12 +1,13 @@
 import json
-
+import os
 import numpy as np
 import pandas as pd
 
 import nn_metadata as md
 
 
-source_path = "../../dataset/problems MoonBoard 2016 .json"
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+source_path = ROOT_DIR + "/dataset/problems MoonBoard 2016 .json"
 
 with open(source_path) as file:
     source_dict = json.load(file)
