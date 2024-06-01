@@ -50,12 +50,16 @@ def clean(prob):
     elif prob['grade'] == '6B+':
         if prob['userGrade'] != '6B+':
             return False
-        elif prob['grade'] == '6B+' and prob['userRating'] < 4:
+        elif prob['userRating'] < 4:
             return False
         elif prob['repeats'] < 10:
             return False
         else:
             return True
+    elif prob['repeats'] < 2:
+        return False
+    elif prob['userRating'] < 4:
+        return False
     else:
         return True
 

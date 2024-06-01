@@ -1,6 +1,7 @@
 
 import numpy as np
 import itertools
+from math import sqrt
 
 
 ### GRADES ###
@@ -9,6 +10,18 @@ grades = ['6B', '6B+', '6C', '6C+', '7A', '7A+', '7B', '7B+', '7C', '7C+', '8A',
 grade_int = {'6B': 0, '6B+': 1, '6C': 2, '6C+': 3, '7A': 4, '7A+': 5, '7B': 6, '7B+': 7, '7C': 8, '7C+': 9, '8A': 10, '8A+': 11, '8B': 12, '8B+': 13}
 def grade_comparison(gr1, gr2):
     return grade_int[gr1] >= grade_int[gr2]
+
+exp_grade_int = {'6B': 1, '6B+': 2, '6C': 4, '6C+': 8, '7A': 16, '7A+': 32, '7B': 64, '7B+': 128, '7C': 256, '7C+': 512, '8A': 1024, '8A+': 2048, '8B': 4096, '8B+': 8192}
+
+def adjacent_grades(gr1,gr2):
+    return (grade_int[gr1] >= grade_int[gr2] - 1) and (grade_int[gr1] <= grade_int[gr2] + 1)
+
+def one_off_accuracy(pred,y):#Make sure y is an numpy array of target grades
+    count = 0
+    for i in range(len(y)):
+        if adjacent_grades(y[i], pred[i]):
+            count+= 1
+    return (count/len(y))
 
 
 ### HOLDS ###
@@ -22,6 +35,7 @@ def hold_row(hold): return hold[1:]
 def hold_row_int(hold): return int(hold_row(hold))
 def hold_column(hold): return hold[0]
 def hold_col_int(hold): return column_int[hold_column(hold)]
+def hold_dist(hold1, hold2): return sqrt((hold_row_int(hold1) - hold_row_int(hold2))**2 + (hold_col_int(hold1) - hold_col_int(hold2))**2)
 
 
 
